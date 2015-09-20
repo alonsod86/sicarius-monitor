@@ -46,11 +46,14 @@ Here is an example of config file
 	</monitors>
 </config>
 ```
-As you can see, just define the type of monitor you want to use and specify its parameters
+As you can see, just define the type of monitor you want to use and specify its parameters. Right now there are only two types of watchers
+
 1. HTTPGetMonitor -> Performs a GET/ request under the specified path
 2. ProcessMonitor -> Performs a ps -e command under UNIX/MacOS systems, looking for the given process
 
-Then define the actions to execute when the process is not found
+
+Then define the actions to execute when the process is not found. Right now there are only two types of actions
+
 1. LoggerAction -> Prints the trace specified in params
 2. ShellExecutorAction -> Executes the given command, printing the response
 
