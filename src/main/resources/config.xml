@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+	<node>SIC_1</node>
+	<monitors>
+		<monitor id="core" watcher="fs.sicarius.monitor.watchers.HTTPGetMonitor">
+			<params>
+				<path>http://${env.core.ip}/alps</path>
+			</params>
+			<expect>
+				<status>200</status>
+				<message>OK</message>
+			</expect>
+			<actions>
+				<action actuator="fs.sicarius.monitor.actuators.LoggerAction">
+					<message>Service [core] is not available</message>
+				</action>
+				<action actuator="fs.sicarius.monitor.actuators.ShellExecutorAction">
+					<command>ping -c 1 localhost</command>
+				</action>
+			</actions>
+		</monitor>
+		<monitor id="procesos" watcher="fs.sicarius.monitor.watchers.ProcessMonitor">
+			<params>
+				<process>demo.DemoApplication</process>
+			</params>
+			<expect>
+				<processes>2</processes>
+			</expect>
+			<actions>
+				<action actuator="fs.sicarius.monitor.actuators.LoggerAction">
+					<message>Service [procesos] is not available</message>
+				</action>
+			</actions>
+		</monitor>
+	</monitors>
+</config>
