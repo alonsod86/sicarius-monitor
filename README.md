@@ -57,5 +57,26 @@ Then define the actions to execute when the process is not found. Right now ther
 1. LoggerAction -> Prints the trace specified in params
 2. ShellExecutorAction -> Executes the given command, printing the response
 
+## Environment ready
+Use the environment variables to replace data inside the config.xml using the properties defined per environment inside the project.
+
+In the properties
+
+```
+env.core.ip=localhost:8080
+```
+
+In the xml
+
+```xml
+<path>http://${env.core.ip}/alps</path>
+```
+
+In order to choose a desired environment properties (dev, prod, etc) run the project with the following program arguments
+
+```
+--spring.profiles.active=dani
+```
+
 ## Distributed
 The monitor application runs under jGroups to establish a communication channel where every monitor can see what is going on in the cluster (if any). It exposes a series of statistics and events log for a third party application to show.
