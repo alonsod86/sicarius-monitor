@@ -1,7 +1,5 @@
 package fs.sicarius.monitor.watchers;
 
-import java.util.HashMap;
-
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
@@ -13,8 +11,6 @@ import org.springframework.web.client.RestTemplate;
  */
 public class HTTPGetMonitor implements IMonitor {
 	private RestTemplate rest = null;
-	private HashMap<String, Object> expect = null;
-	
 	private String path = null;
 
 	public HTTPGetMonitor() {
