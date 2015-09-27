@@ -9,3 +9,6 @@ buildNumber.properties
 .classpath
 .project
 .springBeans
+*.iml
+.idea
+.settings

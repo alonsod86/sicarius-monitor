@@ -1,19 +1,8 @@
 package fs.sicarius.monitor;
 
-import java.io.File;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.annotation.PostConstruct;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
+import fs.sicarius.monitor.actuators.IAction;
+import fs.sicarius.monitor.watchers.IAsyncMonitor;
+import fs.sicarius.monitor.watchers.IMonitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,8 +14,15 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import fs.sicarius.monitor.actuators.IAction;
-import fs.sicarius.monitor.watchers.IMonitor;
+import javax.annotation.PostConstruct;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import java.io.File;
+import java.lang.reflect.Field;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 @Component
@@ -36,6 +32,11 @@ public class Engine {
 	private Pattern pattern=null;
 	private Matcher matcher=null;
 
+	/** Map of async monitors and their callable function */
+	private HashMap<String, Future<Boolean>> asyncMonitors = new HashMap<>();
+
+	/** Thread executor for async monitors */
+	private ExecutorService executor = Executors.newFixedThreadPool(1);
 
 	@Autowired
 	private Cluster cluster;
@@ -190,10 +191,33 @@ public class Engine {
 		for (int index=0; index<toCheck.size(); index++) {
 			Check item = toCheck.get(index);
 			boolean checks = false;
-			// check if monitor fails to check it's condition
-			if (item.monitor.isAsync()) {
-				if (item.monitor.check()) {
+
+			// initialize async monitors if any
+			if (item.monitor instanceof IAsyncMonitor) {
+				// If the task has not been executed before, do it
+				if (!asyncMonitors.containsKey(item.id)) {
+					Callable<Boolean> task = () -> {
+						return item.monitor.check();
+					};
+					Future<Boolean> future = executor.submit(task);
+					asyncMonitors.put(item.id, future);
 				}
+				// Get the defered result for the given watcher
+				Future<Boolean> future = asyncMonitors.get(item.id);
+
+				// Check the result
+				try {
+					if (future.isDone() && future.get()) {
+						asyncMonitors.remove(item.id);
+						// execute the action
+						item.trigger.forEach(action-> action.execute(item.monitor));
+						// communicate the cluster failure
+						cluster.registerEvent(item.id, new Event("Service did not respond. Executed " + item.trigger.size() + " actions", System.currentTimeMillis()));
+					}
+				} catch (Exception e) {
+					log.error("Error executing async monitor {}. Reason is {}", item.id, e.getMessage());
+				}
+				// check sync monitors if any
 			} else {
 				if (!(checks=item.monitor.check())){
 					// execute the action
@@ -202,7 +226,7 @@ public class Engine {
 					cluster.registerEvent(item.id, new Event("Service did not respond. Executed " + item.trigger.size() + " actions", System.currentTimeMillis()));
 				}
 			}
-			
+
 			// communicate cluster the monitor status
 			cluster.updateStats(item.id, new Stat(checks, System.currentTimeMillis()));
 		}

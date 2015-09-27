@@ -1,35 +1,26 @@
 package fs.sicarius.monitor.watchers;
 
-import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
-import static java.nio.file.StandardWatchEventKinds.ENTRY_DELETE;
-import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.nio.file.FileSystems;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.WatchEvent;
-import java.nio.file.WatchKey;
-import java.nio.file.WatchService;
+import java.nio.file.*;
 import java.util.HashMap;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static java.nio.file.StandardWatchEventKinds.*;
 
 /**
  * Monitors UNIX/MacOS processes
  * @author alonso
  *
  */
-public class FileMonitor implements IMonitor {
+public class FileMonitor implements IAsyncMonitor {
 	private Logger log = LoggerFactory.getLogger(FileMonitor.class);
 	private static HashMap<String, WatchService> watchers = new HashMap<>(); 
 
 	private String path;
 
-	private boolean resolved = false;
-	
 	public void registerNewWatcher(String path) {
 		Path dir = Paths.get(path);
 		try {
@@ -43,7 +34,6 @@ public class FileMonitor implements IMonitor {
 
 	@Override
 	public boolean check() {
-		this.resolved = false;
 		// Register watcher in case it does not exist
 		if (!watchers.containsKey(this.path)) {
 			registerNewWatcher(this.path);
@@ -69,22 +59,11 @@ public class FileMonitor implements IMonitor {
 			}
 
 			watckKey.reset();
-			this.resolved = true;
 			return changes;
 		} catch (Exception e) {
 			log.error("Unable to check for filesystem changes on {}", this.path);
 		}
 
 		return false;
-	}
-	
-	@Override
-	public boolean isAsync() {
-		return true;
-	}
-	
-	@Override
-	public boolean isResolved() {
-		return this.resolved;
 	}
 }

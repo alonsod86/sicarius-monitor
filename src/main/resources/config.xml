@@ -34,21 +34,21 @@
 		</monitor>
 		<monitor id="disk" watcher="fs.sicarius.monitor.watchers.FileMonitor">
 			<params>
-				<path>/Users/tiocansino/Git</path>
+				<path>/Users/alonso/Curro</path>
 			</params>
 			<actions>
 				<action actuator="fs.sicarius.monitor.actuators.LoggerAction">
-					<message>File w{fileName} changed</message>
+					<message>File changed</message>
 				</action>
 			</actions>
 		</monitor>
-		<monitor id="disk2" watcher="fs.sicarius.monitor.watchers.FileMonitor">
+		<monitor id="disk2" watcher="fs.sicarius.monitor.watchers.FileMonitor" disabled="true">
 			<params>
 				<path>/Users/tiocansino/Git</path>
 			</params>
 			<actions>
 				<action actuator="fs.sicarius.monitor.actuators.LoggerAction">
-					<message>File w{fileName} changed!!!!!!!!!</message>
+					<message>File changed!!!!!!!!!</message>
 				</action>
 			</actions>
 		</monitor>
