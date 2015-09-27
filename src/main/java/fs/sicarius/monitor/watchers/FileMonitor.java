@@ -115,7 +115,7 @@ public class FileMonitor implements IAsyncMonitor {
 			TimeUnit.MILLISECONDS.sleep(100);
 			long size = f.length();
 			TimeUnit.MILLISECONDS.sleep(1000);
-			log.debug("{}", size!=f.length());
+			//log.debug("{}", size!=f.length());
 			if (size!=f.length()) {
 				return isFinished(fileName);
 			}

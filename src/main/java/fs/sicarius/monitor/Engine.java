@@ -186,7 +186,7 @@ public class Engine {
 		return text;
 	}
 
-	@Scheduled(fixedRate=100)
+	@Scheduled(fixedRate=5000)
 	public void checkAllMonitors() {
 		for (int index=0; index<toCheck.size(); index++) {
 			Check item = toCheck.get(index);
