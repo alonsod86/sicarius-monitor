@@ -37,16 +37,16 @@
 			<params>
 				<path>/Users/tiocansino/Git</path>
 				<filter>*caca.war</filter>
-				<event>CREATE|MODIFY</event>
+				<event>CREATE|MODIFY|DELETE</event>
 			</params>
 			<actions>
 				<action actuator="fs.sicarius.monitor.actuators.FileUploader">
 					<server>localhost</server>
 					<port>22</port>
-					<username>tiocansino</username>
-					<password>AngelFire</password>
-					<from>/Users/tiocansino/Git/caca.war</from>
-					<to>/Users/tiocansino/Git/caca_new.war</to>
+					<username>my_user</username>
+					<password>my_password</password>
+					<from>/Users/tiocansino/Git/kk.war</from>
+					<to>/Users/tiocansino/Git/kk_new.war</to>
 					<clean>true</clean>
 				</action>
 				<action actuator="fs.sicarius.monitor.actuators.LoggerAction">
