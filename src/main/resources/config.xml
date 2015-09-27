@@ -32,23 +32,22 @@
 				</action>
 			</actions>
 		</monitor>
+		<!-- updater -->
 		<monitor id="disk" watcher="fs.sicarius.monitor.watchers.FileMonitor">
 			<params>
 				<path>/Users/alonso/Curro</path>
 			</params>
 			<actions>
+				<action actuator="fs.sicarius.monitor.actuators.FileUploader">
+					<server>localhost</server>
+					<port>22</port>
+					<username>sicarius</username>
+					<password>futurespace</password>
+					<from>/Users/alonso/Curro/caca.war</from>
+					<to>/sicarius/core/caca.war</to>
+				</action>
 				<action actuator="fs.sicarius.monitor.actuators.LoggerAction">
 					<message>File changed</message>
-				</action>
-			</actions>
-		</monitor>
-		<monitor id="disk2" watcher="fs.sicarius.monitor.watchers.FileMonitor" disabled="true">
-			<params>
-				<path>/Users/tiocansino/Git</path>
-			</params>
-			<actions>
-				<action actuator="fs.sicarius.monitor.actuators.LoggerAction">
-					<message>File changed!!!!!!!!!</message>
 				</action>
 			</actions>
 		</monitor>
