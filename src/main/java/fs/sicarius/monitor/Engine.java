@@ -186,7 +186,7 @@ public class Engine {
 		return text;
 	}
 
-	@Scheduled(fixedRate=5000)
+	@Scheduled(fixedRate=100)
 	public void checkAllMonitors() {
 		for (int index=0; index<toCheck.size(); index++) {
 			Check item = toCheck.get(index);
@@ -207,12 +207,14 @@ public class Engine {
 
 				// Check the result
 				try {
-					if (future.isDone() && future.get()) {
+					if (future.isDone()) {
 						asyncMonitors.remove(item.id);
-						// execute the action
-						item.trigger.forEach(action-> action.execute(item.monitor));
-						// communicate the cluster failure
-						cluster.registerEvent(item.id, new Event("Service did not respond. Executed " + item.trigger.size() + " actions", System.currentTimeMillis()));
+						if (future.get()) {
+							// execute the action
+							item.trigger.forEach(action-> action.execute(item.monitor));
+							// communicate the cluster failure
+							cluster.registerEvent(item.id, new Event("Service did not respond. Executed " + item.trigger.size() + " actions", System.currentTimeMillis()));
+						}
 					}
 				} catch (Exception e) {
 					log.error("Error executing async monitor {}. Reason is {}", item.id, e.getMessage());

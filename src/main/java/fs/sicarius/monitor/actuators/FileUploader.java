@@ -7,6 +7,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Properties;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
@@ -19,6 +22,8 @@ import fs.sicarius.monitor.watchers.IMonitor;
  * Created by alonso on 27/09/15.
  */
 public class FileUploader implements IAction {
+	private Logger log = LoggerFactory.getLogger(FileUploader.class);
+
     private String server;
     private String port;
     private String username;
@@ -29,6 +34,7 @@ public class FileUploader implements IAction {
     
     @Override
     public void execute(IMonitor monitor) {
+    	log.info("Uploading file {} to {}", this.from, this.server);
     	boolean clean = false;
     	if (this.clean!=null && "true".equals(this.clean)) {
     		clean = true;
@@ -51,6 +57,7 @@ public class FileUploader implements IAction {
 
             // upload file
             upload(sftp, to, from);
+            log.info("[{}] Uploaded file {} to {}", server, from, to);
             
             // clean original if flag 'clean' is true
             if (clean) {
