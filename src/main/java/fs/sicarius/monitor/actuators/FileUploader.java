@@ -1,13 +1,19 @@
 package fs.sicarius.monitor.actuators;
 
-import com.jcraft.jsch.*;
-import fs.sicarius.monitor.watchers.IMonitor;
-
 import java.io.BufferedOutputStream;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Properties;
+
+import com.jcraft.jsch.ChannelSftp;
+import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.JSchException;
+import com.jcraft.jsch.Session;
+import com.jcraft.jsch.SftpException;
+
+import fs.sicarius.monitor.watchers.IMonitor;
 
 /**
  * Created by alonso on 27/09/15.
@@ -19,9 +25,14 @@ public class FileUploader implements IAction {
     private String password;
     private String from;
     private String to;
-
+    private String clean;
+    
     @Override
     public void execute(IMonitor monitor) {
+    	boolean clean = false;
+    	if (this.clean!=null && "true".equals(this.clean)) {
+    		clean = true;
+    	}
         try {
             // Connect to an SFTP server on port 22
             JSch jsch = new JSch();
@@ -40,6 +51,11 @@ public class FileUploader implements IAction {
 
             // upload file
             upload(sftp, to, from);
+            
+            // clean original if flag 'clean' is true
+            if (clean) {
+            	new File(from).delete();
+            }
         } catch (JSchException e) {
             System.out.println("JSchException =" + e.getMessage());
         }

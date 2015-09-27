@@ -20,6 +20,8 @@ public class FileMonitor implements IAsyncMonitor {
 	private static HashMap<String, WatchService> watchers = new HashMap<>(); 
 
 	private String path;
+	private String filter;
+	private String event;
 
 	public void registerNewWatcher(String path) {
 		Path dir = Paths.get(path);
@@ -30,10 +32,21 @@ public class FileMonitor implements IAsyncMonitor {
 		} catch (IOException e) {
 			log.error("Unable to register new file watcher");
 		}
+
+		// prepare filter for regex
+		if (this.filter!=null) {
+			this.filter = this.filter.replace("?", ".?").replace("*", ".*?");
+		} else {
+			this.filter = ".*?";
+		}
 	}
 
 	@Override
 	public boolean check() {
+		boolean allowCreate = this.event==null || this.event.contains("CREATE");
+		boolean allowDelete = this.event==null || this.event.contains("DELETE");
+		boolean allowModify = this.event==null || this.event.contains("MODIFY");
+
 		// Register watcher in case it does not exist
 		if (!watchers.containsKey(this.path)) {
 			registerNewWatcher(this.path);
@@ -44,17 +57,23 @@ public class FileMonitor implements IAsyncMonitor {
 			WatchKey watckKey = watchers.get(this.path).take();
 			List<WatchEvent<?>> events = watckKey.pollEvents();
 			for (WatchEvent<?> event : events) {
-				if (event.kind() == ENTRY_CREATE) {
-					log.info("Created: " + event.context().toString());
-					changes = true;
+				if (allowCreate && event.kind() == ENTRY_CREATE) {
+					if (event.context().toString().matches(this.filter)) {
+						log.info("Created: " + event.context().toString());
+						changes = true;
+					}
 				}
-				if (event.kind() == ENTRY_DELETE) {
-					log.info("Delete: " + event.context().toString());
-					changes = true;
+				if (allowDelete && event.kind() == ENTRY_DELETE) {
+					if (event.context().toString().matches(this.filter)) {
+						log.info("Delete: " + event.context().toString());
+						changes = true;
+					}
 				}
-				if (event.kind() == ENTRY_MODIFY) {
-					log.info("Modify: " + event.context().toString());
-					changes = true;
+				if (allowModify && event.kind() == ENTRY_MODIFY) {
+					if (event.context().toString().matches(this.filter)) {
+						log.info("Modify: " + event.context().toString());
+						changes = true;
+					}
 				}
 			}
 
