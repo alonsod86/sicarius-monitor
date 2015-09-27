@@ -132,7 +132,7 @@ public class Engine {
 						// Set expect object
 						if (!expect.isEmpty()) {
 							try {
-								Field field = monitorClass.getDeclaredField("expect");
+								Field field = IAction.class.getDeclaredField("expect");
 								field.setAccessible(true);
 								field.set(mon, expect);
 							} catch (Exception e) {
@@ -207,13 +207,25 @@ public class Engine {
 
 				// Check the result
 				try {
+					// the async task is completed
 					if (future.isDone()) {
 						asyncMonitors.remove(item.id);
-						if (future.get()) {
-							// execute the action
-							item.trigger.forEach(action-> action.execute(item.monitor));
-							// communicate the cluster failure
-							cluster.registerEvent(item.id, new Event("Service did not respond. Executed " + item.trigger.size() + " actions", System.currentTimeMillis()));
+						// the monitor returned false. Trigger the actions
+						if (!future.get()) {
+							if (!item.triggered) {
+								// execute the action
+								item.trigger.forEach(action-> action.execute(item.monitor));
+								// communicate the cluster failure
+								cluster.registerEvent(item.id, new Event("Service did not respond. Executed " + item.trigger.size() + " actions", System.currentTimeMillis()));
+								item.triggered = true;
+							} else {
+								log.debug("Ignoring trigger because monitor already executed the actions");
+							}
+							// The monitor returned true. Service is alive. Reset the triggered flag
+						} else {
+							if (item.triggered)
+								log.debug("Monitor {} reported that service is back online again", item.id);
+							item.triggered = false;
 						}
 					}
 				} catch (Exception e) {
@@ -221,11 +233,23 @@ public class Engine {
 				}
 				// check sync monitors if any
 			} else {
+				// the monitor returned false. Trigger the actions
 				if (!(checks=item.monitor.check())){
-					// execute the action
-					item.trigger.forEach(action-> action.execute(item.monitor));
-					// communicate the cluster failure
-					cluster.registerEvent(item.id, new Event("Service did not respond. Executed " + item.trigger.size() + " actions", System.currentTimeMillis()));
+					if (!item.triggered) {
+						// execute the action
+						item.trigger.forEach(action-> action.execute(item.monitor));
+						// communicate the cluster failure
+						cluster.registerEvent(item.id, new Event("Service did not respond. Executed " + item.trigger.size() + " actions", System.currentTimeMillis()));
+						item.triggered = true;
+					} else {
+						log.debug("Ignoring trigger because monitor already executed the actions");
+
+					}
+					// The monitor returned true. Service is alive. Reset the triggered flag
+				} else {
+					if (item.triggered)
+						log.debug("Monitor {} reported that service is back online again", item.id);
+					item.triggered = false;
 				}
 			}
 

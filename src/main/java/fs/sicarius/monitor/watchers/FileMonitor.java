@@ -65,7 +65,7 @@ public class FileMonitor implements IAsyncMonitor {
 		
 		// Wait for changes
 		try {
-			boolean changes = false;
+			boolean checks = true;
 			WatchKey watckKey = watchers.get(this.path).take();
 			List<WatchEvent<?>> events = watckKey.pollEvents();
 			for (WatchEvent<?> event : events) {
@@ -73,21 +73,21 @@ public class FileMonitor implements IAsyncMonitor {
 					if (event.context().toString().matches(filter)) {
 						if (isFinished(this.path + "/" + event.context().toString())) {
 							log.info("Created: " + event.context().toString());
-							changes = true;
+							checks = false;
 						}
 					}
 				}
 				if (allowDelete && event.kind() == ENTRY_DELETE) {
 					if (event.context().toString().matches(filter)) {
 						log.info("Delete: " + event.context().toString());
-						changes = true;
+						checks = false;
 					}
 				}
 				if (allowModify && event.kind() == ENTRY_MODIFY) {
 					if (event.context().toString().matches(filter)) {
 						if (isFinished(this.path + "/" + event.context().toString())) {
 							log.info("Modify: " + event.context().toString());
-							changes = true;
+							checks = false;
 						}
 					}
 				}
@@ -96,12 +96,12 @@ public class FileMonitor implements IAsyncMonitor {
 			watckKey.cancel();
 			watchers.get(this.path).close();
 			watchers.remove(this.path);
-			return changes;
+			return checks;
 		} catch (Exception e) {
 			log.error("Unable to check for filesystem changes on {}", this.path);
 		}
 
-		return false;
+		return true;
 	}
 
 	/** 

@@ -2,7 +2,8 @@
 <config>
 	<node>SIC_1</node>
 	<monitors>
-		<monitor id="core" watcher="fs.sicarius.monitor.watchers.HTTPGetMonitor" disabled="true">
+		<monitor id="core" watcher="fs.sicarius.monitor.watchers.HTTPGetMonitor"
+			disabled="false">
 			<params>
 				<path>http://${env.core.ip}/alps</path>
 			</params>
@@ -16,7 +17,8 @@
 				</action>
 			</actions>
 		</monitor>
-		<monitor id="procesos" watcher="fs.sicarius.monitor.watchers.ProcessMonitor" disabled="true">
+		<monitor id="procesos" watcher="fs.sicarius.monitor.watchers.ProcessMonitor"
+			disabled="true">
 			<params>
 				<process>demo.DemoApplication</process>
 			</params>
@@ -24,7 +26,7 @@
 				<processes>2</processes>
 			</expect>
 			<actions>
-			<action actuator="fs.sicarius.monitor.actuators.ShellExecutorAction">
+				<action actuator="fs.sicarius.monitor.actuators.ShellExecutorAction">
 					<command>ping -c 1 localhost</command>
 				</action>
 				<action actuator="fs.sicarius.monitor.actuators.LoggerAction">
@@ -33,24 +35,27 @@
 			</actions>
 		</monitor>
 		<!-- updater -->
-		<monitor id="disk" disabled="false" watcher="fs.sicarius.monitor.watchers.FileMonitor">
+		<monitor id="disk" disabled="false"
+			watcher="fs.sicarius.monitor.watchers.FileMonitor">
 			<params>
 				<path>/Users/tiocansino/Git</path>
-				<filter>*caca.war</filter>
-				<event>CREATE|MODIFY|DELETE</event>
+				<filter>*kk.war</filter>
+				<event>CREATE</event> <!-- CREATE|MODIFY|DELETE -->
 			</params>
 			<actions>
+				<action actuator="fs.sicarius.monitor.actuators.FileCopy">
+					<from>/Users/tiocansino/Git/kk.war</from>
+					<to>/Users/tiocansino/Git/kk_moved.war</to>
+					<move>true</move>
+				</action>
 				<action actuator="fs.sicarius.monitor.actuators.FileUploader">
 					<server>localhost</server>
 					<port>22</port>
-					<username>my_user</username>
-					<password>my_password</password>
-					<from>/Users/tiocansino/Git/kk.war</from>
-					<to>/Users/tiocansino/Git/kk_new.war</to>
+					<username>tiocansino</username>
+					<password>AngelFire</password>
+					<from>/Users/tiocansino/Git/kk_moved.war</from>
+					<to>/Users/tiocansino/Git/kk_sfp.war</to>
 					<clean>true</clean>
-				</action>
-				<action actuator="fs.sicarius.monitor.actuators.LoggerAction">
-					<message>File changed</message>
 				</action>
 			</actions>
 		</monitor>
