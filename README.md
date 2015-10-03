@@ -46,16 +46,22 @@ Here is an example of config file
 	</monitors>
 </config>
 ```
-As you can see, just define the type of monitor you want to use and specify its parameters. Right now there are only two types of watchers
+As you can see, just define the type of monitor you want to use and specify its parameters. The existing watchers are
 
-1. HTTPGetMonitor -> Performs a GET/ request under the specified path
-2. ProcessMonitor -> Performs a ps -e command under UNIX/MacOS systems, looking for the given process
+| Watcher        | Description                                                 |
+|----------------|-------------------------------------------------------------|
+| FileMonitor    | Watches for file system changes, allowing for file patterns |
+| HTTPGetMonitor | Performs a GET/ request under the specified path            |
+| ProcessMonitor | Checks for a process under Linux/MacOS                      |
 
+Then define the actions to execute when the process is not found. The existing actions are
 
-Then define the actions to execute when the process is not found. Right now there are only two types of actions
-
-1. LoggerAction -> Prints the trace specified in params
-2. ShellExecutorAction -> Executes the given command, printing the response
+| Actuator            | Description                                                      |
+|---------------------|------------------------------------------------------------------|
+| FileCopy            | Copy a file from a destination to another, renaming if necessary |
+| FileUploader        | Uses SFTP protocol to upload a file to another server            |
+| ShellExecutorAction | Executes a console command under the operating system            |
+| LoggerAction        | Logs an action                                                   |
 
 ## Environment ready
 Use the environment variables to replace data inside the config.xml using the properties defined per environment inside the project.
