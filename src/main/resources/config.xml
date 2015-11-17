@@ -52,7 +52,7 @@
 					<server>localhost</server>
 					<port>22</port>
 					<username>tiocansino</username>
-					<password>AngelFire</password>
+					<password>mypassword</password>
 					<from>/Users/tiocansino/Git/kk_moved.war</from>
 					<to>/Users/tiocansino/Git/kk_sfp.war</to>
 					<clean>true</clean>
