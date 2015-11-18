@@ -18,7 +18,7 @@
 			</actions>
 		</monitor>
 		<monitor id="procesos" watcher="fs.sicarius.monitor.watchers.ProcessMonitor"
-			disabled="true">
+			disabled="false">
 			<params>
 				<process>demo.DemoApplication</process>
 			</params>
@@ -35,7 +35,7 @@
 			</actions>
 		</monitor>
 		<!-- updater -->
-		<monitor id="disk" disabled="false"
+		<monitor id="disk" disabled="true"
 			watcher="fs.sicarius.monitor.watchers.FileMonitor">
 			<params>
 				<path>/Users/tiocansino/Git</path>

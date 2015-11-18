@@ -1,8 +1,23 @@
 package fs.sicarius.monitor;
 
-import fs.sicarius.monitor.actuators.IAction;
-import fs.sicarius.monitor.watchers.IAsyncMonitor;
-import fs.sicarius.monitor.watchers.IMonitor;
+import java.io.File;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.annotation.PostConstruct;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,15 +29,9 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import javax.annotation.PostConstruct;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import java.io.File;
-import java.lang.reflect.Field;
-import java.util.*;
-import java.util.concurrent.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import fs.sicarius.monitor.actuators.IAction;
+import fs.sicarius.monitor.watchers.IAsyncMonitor;
+import fs.sicarius.monitor.watchers.IMonitor;
 
 
 @Component
@@ -44,6 +53,7 @@ public class Engine {
 	@Autowired
 	private Environment env;
 
+	@SuppressWarnings("unchecked")
 	@PostConstruct
 	public void initialize() throws Exception {
 		pattern=Pattern.compile("\\$\\{([a-zA-Z]+(\\.[a-zA-Z]+)*)\\}");
@@ -129,12 +139,12 @@ public class Engine {
 							}
 						}
 
-						// Set expect object
+						// Set expect object if any
 						if (!expect.isEmpty()) {
 							try {
-								Field field = IAction.class.getDeclaredField("expect");
+								Field field = mon.getClass().getSuperclass().getDeclaredField("expect");
 								field.setAccessible(true);
-								field.set(mon, expect);
+								((HashMap<String,Object>)field.get(mon)).putAll((Map<String,Object>) expect);
 							} catch (Exception e) {
 								log.error("Property expect is not accessible in {}", monitorURL);
 							}

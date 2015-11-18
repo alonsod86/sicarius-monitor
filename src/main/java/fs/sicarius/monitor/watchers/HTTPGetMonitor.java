@@ -9,7 +9,7 @@ import org.springframework.web.client.RestTemplate;
  * @author alonso
  *
  */
-public class HTTPGetMonitor implements IMonitor {
+public class HTTPGetMonitor extends DefaultMonitor {
 	private RestTemplate rest = null;
 	private String path = null;
 

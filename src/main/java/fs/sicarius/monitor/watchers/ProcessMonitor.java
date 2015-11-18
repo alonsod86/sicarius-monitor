@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
  * @author alonso
  *
  */
-public class ProcessMonitor implements IMonitor {
+public class ProcessMonitor extends DefaultMonitor {
 	private Logger log = LoggerFactory.getLogger(ProcessMonitor.class);
 	private String process;
 	
