@@ -2,7 +2,6 @@ package fs.sicarius.monitor.watchers;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.HashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,10 +11,8 @@ import org.slf4j.LoggerFactory;
  * @author alonso
  *
  */
-public class ProcessMonitor implements IMonitor {
+public class ProcessMonitor extends DefaultMonitor {
 	private Logger log = LoggerFactory.getLogger(ProcessMonitor.class);
-	private HashMap<String, Object> expect = null;
-
 	private String process;
 	
 	@Override

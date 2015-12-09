@@ -3,8 +3,12 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
+<<<<<<< HEAD
 	<groupId>fs.sicarius</groupId>
 	<artifactId>monitor</artifactId>
+=======
+	<groupId>fs.sicarius.monitor</groupId>
+>>>>>>> a0d704d1efb5461f3987b44748ef6374cabc84e0
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
@@ -60,6 +64,17 @@
 			<version>2.3.1</version>
 		</dependency>
 
+		<dependency>
+			<groupId>com.jcraft</groupId>
+			<artifactId>jsch</artifactId>
+			<version>0.1.53</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.scala-lang</groupId>
+			<artifactId>scala-library</artifactId>
+			<version>2.10.4</version>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -72,4 +87,5 @@
 	</build>
 
 
+	<artifactId>sicarius-monitor</artifactId>
 </project>

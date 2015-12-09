@@ -2,7 +2,8 @@
 <config>
 	<node>SIC_1</node>
 	<monitors>
-		<monitor id="core" watcher="fs.sicarius.monitor.watchers.HTTPGetMonitor">
+		<monitor id="core" watcher="fs.sicarius.monitor.watchers.HTTPGetMonitor"
+			disabled="false">
 			<params>
 				<path>http://${env.core.ip}/alps</path>
 			</params>
@@ -14,12 +15,10 @@
 				<action actuator="fs.sicarius.monitor.actuators.LoggerAction">
 					<message>Service [core] is not available</message>
 				</action>
-				<action actuator="fs.sicarius.monitor.actuators.ShellExecutorAction">
-					<command>ping -c 1 localhost</command>
-				</action>
 			</actions>
 		</monitor>
-		<monitor id="procesos" watcher="fs.sicarius.monitor.watchers.ProcessMonitor">
+		<monitor id="procesos" watcher="fs.sicarius.monitor.watchers.ProcessMonitor"
+			disabled="false">
 			<params>
 				<process>demo.DemoApplication</process>
 			</params>
@@ -27,8 +26,36 @@
 				<processes>2</processes>
 			</expect>
 			<actions>
+				<action actuator="fs.sicarius.monitor.actuators.ShellExecutorAction">
+					<command>ping -c 1 localhost</command>
+				</action>
 				<action actuator="fs.sicarius.monitor.actuators.LoggerAction">
 					<message>Service [procesos] is not available</message>
+				</action>
+			</actions>
+		</monitor>
+		<!-- updater -->
+		<monitor id="disk" disabled="true"
+			watcher="fs.sicarius.monitor.watchers.FileMonitor">
+			<params>
+				<path>/Users/tiocansino/Git</path>
+				<filter>*kk.war</filter>
+				<event>CREATE</event> <!-- CREATE|MODIFY|DELETE -->
+			</params>
+			<actions>
+				<action actuator="fs.sicarius.monitor.actuators.FileCopy">
+					<from>/Users/tiocansino/Git/kk.war</from>
+					<to>/Users/tiocansino/Git/kk_moved.war</to>
+					<move>true</move>
+				</action>
+				<action actuator="fs.sicarius.monitor.actuators.FileUploader">
+					<server>localhost</server>
+					<port>22</port>
+					<username>tiocansino</username>
+					<password>mypassword</password>
+					<from>/Users/tiocansino/Git/kk_moved.war</from>
+					<to>/Users/tiocansino/Git/kk_sfp.war</to>
+					<clean>true</clean>
 				</action>
 			</actions>
 		</monitor>
