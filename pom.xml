@@ -2,13 +2,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-
-<<<<<<< HEAD
+	
 	<groupId>fs.sicarius</groupId>
 	<artifactId>monitor</artifactId>
-=======
-	<groupId>fs.sicarius.monitor</groupId>
->>>>>>> a0d704d1efb5461f3987b44748ef6374cabc84e0
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
@@ -85,7 +81,4 @@
 			</plugin>
 		</plugins>
 	</build>
-
-
-	<artifactId>sicarius-monitor</artifactId>
 </project>
